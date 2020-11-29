@@ -1,5 +1,5 @@
 #Entire code can run in https://colab.research.google.com/ Create an Gmail account if necessary
-#Step:1 : run the below code.
+#Step:1 : open an code+ run the below code.
 
 
 !pip install selenium #install selenium
