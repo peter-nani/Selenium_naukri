@@ -1,0 +1,126 @@
+#Entire code can run in https://colab.research.google.com/ Create an Gmail account if necessary
+#Step:1 : run the below code.
+
+
+!pip install selenium #install selenium
+!apt-get update # to update ubuntu to correctly run apt install
+!apt install chromium-chromedriver #install chromedriver
+!cp /usr/lib/chromium-browser/chromedriver /usr/bin #specify the path in linux for driver
+
+
+#Step:2 open an another code+ Login With User Namer and Password and run the below code
+
+import sys
+import random
+import time
+from selenium.common.exceptions import NoSuchElementException 
+from selenium.webdriver.common.keys import Keys
+sys.path.insert(0,'/usr/lib/chromium-browser/chromedriver')
+from selenium import webdriver
+from selenium.webdriver.support.ui import Select
+chrome_options = webdriver.ChromeOptions()
+chrome_options.add_argument("--incognito")
+chrome_options.add_argument('--headless')
+chrome_options.add_argument('--no-sandbox')
+chrome_options.add_argument('--disable-dev-shm-usage')
+wd = webdriver.Chrome('/usr/lib/chromium-browser/chromedriver',options = chrome_options)
+#Maximizing the window
+wd.maximize_window()
+#open website
+wd.get("https://www.naukri.com/nlogin/login")
+#search_1 = wd.find_elements_by_xpath('//*[@id="loginForm"]/div[3]/div[3]/div/button')[0]
+#print("Element is visible? " + str(search_1.is_displayed()))
+#wd.execute_script("arguments[0].click();", search_1)
+#search_1.click()
+#login with xpath ID
+
+ids = wd.find_elements_by_xpath('//*[@id]')
+for i in ids:
+    #print ii.tag_name
+    print(i.get_attribute('id'))
+time.sleep(1)
+#Find user name element
+search_2 = wd.find_element_by_id('usernameField')
+time.sleep(1)
+search_2.send_keys("PUT UR USER NAME")                             #PUT YOUR USERNAME
+#login with xpath password
+search_3 = wd.find_element_by_id("passwordField")
+time.sleep(1)
+search_3.send_keys("PUT YOUR PASSWORD")                                  #PUT YOUR PASSWORD
+
+#Click Login
+search_login = wd.find_element_by_xpath('//*[@id="loginForm"]/div[3]/div[3]/div/button[1]')
+search_login.click()
+
+
+
+
+
+#Step:3 open an another code+ and enter JOB search name  and JOB search location run the below code
+
+#enter JOB search name
+search_4 = wd.find_element_by_id('qsb-keyskill-sugg')
+time.sleep(1)
+search_4.send_keys("python")                                               #enter JOB search name
+#enter JOB search location
+search_5 = wd.find_element_by_id("qsb-location-sugg")
+time.sleep(1)
+search_5.send_keys("Hyderabad/Secunderabad,")                               #JOB search location 
+#Click Search button
+search_6 = wd.find_element_by_xpath('//*[@id="search-jobs"]/button')
+time.sleep(1)
+search_6.click()
+home_page = (wd.current_url)
+print(home_page)
+
+
+#Step:3 open an another code+ run the below code and sit back relax,
+
+
+page=1
+count=0
+
+while page<=10:
+  main_url = wd.current_url
+  print(main_url)
+  time.sleep(2)
+  elems = wd.find_elements_by_xpath("//a[@href]")
+  for elem in elems:
+      links=elem.get_attribute("href")
+      match='job-listings'
+      if match in links:
+        tab_url = links
+        print(links)
+        # Open a new window
+        wd.execute_script("window.open('');")
+        # Switch to the new window and open URL B
+        wd.switch_to.window(wd.window_handles[1])
+        wd.get(tab_url)
+        wd.execute_script("window.scrollTo(0, window.scrollY + 500)")
+        time.sleep(2)
+        try:
+          apply_btn = wd.find_element_by_class_name("apply-button").click()
+          time.sleep(2)
+        except NoSuchElementException:
+          print('Notfound_passing')
+          pass
+        # …Do something here
+        print("Current Page Title is : %s" %wd.title)
+        # Close the tab with URL B
+        wd.close()
+        # Switch back to the first tab with URL A
+        wd.switch_to.window(wd.window_handles[0])
+        nxt_page = wd.current_url
+        count+=1
+        print('pagecount:',count)
+      if count == 20:
+          page+=1
+          convert_str = str(page)
+          count=0
+          next_page = nxt_page+"-"+convert_str
+          main_url=next_page
+          wd.switch_to.window(wd.window_handles[0])
+          print("Current Page Title is : %s" %wd.title)
+          wd.get(main_url)
+          break
+
